@@ -6,6 +6,11 @@ const bodyParser = require('body-parser'); // parses incoming requests
 const morgan = require('morgan'); // logging framework
 const app = express();
 const router = require('./router');
+const mongoose = require('mongoose');
+
+// DB Setup
+mongoose.connect('mongodb://localhost:27017/auth');
+
 // App Setup
 app.use(morgan('combined'));
 app.use(bodyParser.json({ type: '*/*'})); // parses any incoming request into a JSON
