@@ -34,6 +34,10 @@ const jwtOptions = {
 // Create JWT Strategy
 // payload -- decoded payload that we encoded before
 const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done){
+
+  // This function gets a payload with a property of sub that is decoded.
+  // We encoded the ID field of the User model to create a JWT. Now, we decode it, retrieve the ID and look for it in the database to verify the user.
+
   // See if the user ID in the payload exists in our database
   // If it does, call 'done' with that user
   // other, call done without a user object
