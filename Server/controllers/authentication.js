@@ -1,8 +1,27 @@
 const User = require('../models/user');
+const jwt = require('jwt-simple');
+const config = require('../config');
+
+function tokenForUser(user) {
+  // sub - short for subject, refers to the entity owning the token -- in this case, the user
+  // iat - Issued at Time, refers to when the token was issued
+  const timestamp = new Date().getTime();
+  return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+}
+
+
+exports.signin = function(req, res, next) {
+  // User has already had their email and password authenticated
+  // We just need to give them a token
+}
 
 exports.signup = function(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
+
+  if (!email || !password) {
+    return res.status(422).send({ error: 'You must provide email and password' });
+  }
 
   // Checking for an existing user - duplicate email address
   User.findOne({ email: email }, function(err, existingUser) {
@@ -19,9 +38,7 @@ exports.signup = function(req, res, next) {
       if (err) { return next(err) }
     
       // Respond to request indicating the user was created
-      res.json({ success: true });
+      res.json({ token: tokenForUser(user) });
     });
-
   });
-
 }
