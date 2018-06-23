@@ -10,7 +10,7 @@ const localOptions = { usernameField: 'email' };
 const localLogin = new LocalStrategy(localOptions, function(email, password, done){
   // Verify this email and password, call done with the user
   // If it is the correct username and password
-
+  // Otherwise, call done with false
   User.findOne({ email: email }, function(err, user){
     if (err) { return done(err); }
     if (!user) { return done(null, false); }
@@ -23,7 +23,6 @@ const localLogin = new LocalStrategy(localOptions, function(email, password, don
       return done(null, user);
     });
   });
-  // Otherwise, call done with false
 });
 
 // Setup options for JWT Strategy
