@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
+import * as actions from '../../actions';
 
 class SignIn extends Component {
 
+  constructor(props) {
+    super(props);
+    this.renderAlert = this.renderAlert.bind(this);
+  }
+
   handleFormSubmit({ email, password }) {
-    // console.log(email, password);
     // Do the authentication
+    this.props.signInUser({ email, password }, () => {
+      this.props.history.push('/feature');
+    });
+  }
+
+  renderAlert() {
+    if (this.props.errorMessage) {
+      return (
+        <div className="alert alert-danger">
+          <strong> Oops! </strong> {this.props.errorMessage}
+        </div>
+      )
+    }
   }
 
   renderField(field) {
@@ -43,8 +61,9 @@ class SignIn extends Component {
           component={this.renderField}
           label="Password"
           name="password"
-          type="text"
+          type="password"
         />
+        {this.renderAlert()}
         <button className="btn btn-primary" type="submit"> Sign In </button>
       </form>
     );
@@ -63,9 +82,13 @@ function validate(values) {
   return errors;
 }
 
+function mapStateToProps(state) {
+  return { errorMessage: state.auth.error };
+}
+
 export default reduxForm({
   form: 'signin',
   validate,
 })(
-  connect(null, { })(SignIn)
+  connect(mapStateToProps, actions)(SignIn)
 );
