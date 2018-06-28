@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import logger from 'redux-logger';
 import ReduxThunk from 'redux-thunk';
 
+import RequireAuth from './components/require_auth';
 import App from './components/app';
 import SignIn from './components/auth/signin';
 import SignOut from './components/auth/signout';
@@ -23,7 +24,7 @@ ReactDOM.render(
       <div>
         <Header />
         <Switch>
-          <Route path="/feature" component={Feature} />
+          <Route path="/feature" component={RequireAuth(Feature)} />
           <Route path="/signout" component={SignOut} />
           <Route path="/signup" component={SignUp} />
           <Route path="/signin" component={SignIn} />
