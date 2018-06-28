@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AUTH_USER, AUTH_ERROR, UNAUTH_USER } from './types';
+import { AUTH_USER, AUTH_ERROR, UNAUTH_USER, FETCH_MESSAGE } from './types';
 
 const ROOT_URL = `http://localhost:6090`;
 
@@ -56,5 +56,19 @@ export function signUpUser({ email, password }, callback) {
     })
     .catch(response => {
       dispatch(authError('Email in use'))});
+  }
+}
+
+export function fetchMessage() {
+  return function(dispatch) {
+    axios.get(`${ROOT_URL}`, {
+      headers: { authorization: localStorage.getItem('token')}
+    })
+      .then(response => {
+        dispatch({
+          type: FETCH_MESSAGE,
+          payload: response.data.message
+        })
+      })
   }
 }
