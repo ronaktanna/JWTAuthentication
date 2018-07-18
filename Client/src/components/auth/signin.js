@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import * as actions from '../../actions';
 
 class SignIn extends Component {
@@ -10,9 +11,8 @@ class SignIn extends Component {
     this.renderAlert = this.renderAlert.bind(this);
   }
 
-  handleFormSubmit({ email, password }) {
-    // Do the authentication
-    this.props.signInUser({ email, password }, () => {
+  handleFormSubmit = formProps => {
+    this.props.signin(formProps, () => {
       this.props.history.push('/feature');
     });
   }
@@ -27,43 +27,23 @@ class SignIn extends Component {
     }
   }
 
-  renderField(field) {
-    // Get the meta property off the field object.
-    // Also, get the touched and error properties from the meta object that we just pulled off the field object.
-    const { meta: { touched, error } } = field;
-    const className = `form-group ${touched && error ? 'has-danger' : ''}`;
-    return (
-      <div className={className}>
-      <label>{field.label}</label>
-        <input
-          {...field.input}
-          className="form-control"
-          type={field.type}
-        />
-        <div className="text-help">
-          {touched ? error : ''}
-        </div>
-      </div>
-    );
-  }
-
   render() {
     const { handleSubmit } = this.props;
     return (
-      <form onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
+      <form onSubmit={handleSubmit(this.handleFormSubmit)}>
         <Field
-          component={this.renderField}
+          component="input"
           label="Email"
           name="email"
           type="email"
         />
         <Field
-          component={this.renderField}
+          component="input"
           label="Password"
           name="password"
           type="password"
         />
-        {this.renderAlert()}
+        <div> { this.props.errorMessage } </div>
         <button className="btn btn-primary" type="submit"> Sign In </button>
       </form>
     );
@@ -86,9 +66,7 @@ function mapStateToProps(state) {
   return { errorMessage: state.auth.error };
 }
 
-export default reduxForm({
-  form: 'signin',
-  validate,
-})(
-  connect(mapStateToProps, actions)(SignIn)
-);
+export default compose(
+  connect(mapStateToProps, actions),
+  reduxForm({ form: 'signin', validate })
+)(SignIn);
